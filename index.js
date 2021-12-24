@@ -19,21 +19,17 @@ const getfile = cid => {
 const exec = async (str, prev) => {
   if (prev) prev = await getfile(prev)
   const db = await getdb(prev)
-  return db.run(str)
+  return { result: db.exec(str), db }
 }
 
-const binaryExport = async (str, prev) => {
-  if (prev) prev = await getfile(prev)
-  const db = await getdb(prev)
-  db.run(str)
-  return db.export()
-}
-
-const exporter = async (str, prev) => await packToBlob({
-  input: [ await binaryExport(str, prev) ],
+const exporter = db => packToBlob({
+  input: [ db.export() ],
   blockstore: new MemoryBlockStore()
 })
 
+export { exec, exporter }
+
+/*
 const run = async () => {
   let sqlstr = `CREATE TABLE hello (a int, b char); 
 INSERT INTO hello VALUES (0, 'hello');
@@ -43,3 +39,4 @@ INSERT INTO hello VALUES (1, 'world');`
   console.log({root, car})
 }
 run()
+*/

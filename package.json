@@ -13,6 +13,7 @@
   "dependencies": {
     "bent": "^7.3.12",
     "ipfs-car": "^0.6.1",
+    "papaparse": "^5.3.1",
     "sql.js": "^1.6.2",
     "standard": "^16.0.4",
     "yargs": "^17.3.0"

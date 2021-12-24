@@ -1,6 +1,8 @@
 import yargs from 'yargs'
-import csvToSql from './csv-to-sql.js
+import csvToSql from './csv-to-sql.js'
 import { hideBin } from 'yargs/helpers'
+import * as isql from './index.js'
+import Papa from 'papaparse'
 
 const defaults = yargs => {
   return yargs
@@ -43,7 +45,26 @@ const csvOptions = yargs => {
   })
 }
 
-const run = async arg => {
+const run = async argv => {
+  const { result, db } = await isql.exec(argv.statement, argv.input)
+  if (argv.exec) {  
+    if (argv.format === 'json') {
+      console.log(JSON.stringify(result))
+    } else if (argv.format === 'csv') {
+      if (result.length > 1) {
+        throw new Error('Cannot serialize multiple select statements to CSV, use JSON export')
+      }
+      const r = result[0]
+      const csv = Papa.unparse({ data: r.values, fields: r.columns })
+      console.log(csv)
+    } else {
+      throw new Error(`Unknown export format: "${arvg.format}"`)
+    }
+  }
+
+  if (argv.export) {
+    const output = await isql.exporter(db)
+  }
 }
 
 yargs(hideBin(process.argv))
